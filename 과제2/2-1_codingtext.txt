@@ -1,0 +1,11 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int n, int k) {
+	const int nPrice = 12000; //양꼬치 1인분 가격
+	const int kPrice = 2000;  //음료수 개당 가격
+	int kServiceCnt = n / 10;  //서비스 음료수 개수
+	return (n * nPrice) + (k - kServiceCnt) * kPrice;
+}
