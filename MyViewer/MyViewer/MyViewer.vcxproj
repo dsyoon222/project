@@ -188,7 +188,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="framework.h" />
-    <ClInclude Include="ImageViewStatic.h" />
+    <ClInclude Include="ImageViewerWnd.h" />
     <ClInclude Include="MyViewer.h" />
     <ClInclude Include="MyViewerDlg.h" />
     <ClInclude Include="pch.h" />
@@ -196,7 +196,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="ImageViewStatic.cpp" />
+    <ClCompile Include="ImageViewerWnd.cpp" />
     <ClCompile Include="MyViewer.cpp" />
     <ClCompile Include="MyViewerDlg.cpp" />
     <ClCompile Include="pch.cpp">

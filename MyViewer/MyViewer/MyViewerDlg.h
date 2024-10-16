@@ -3,7 +3,7 @@
 //
 
 #pragma once
-#include "ImageViewStatic.h"
+#include "ImageViewerWnd.h"
 
 // CMyViewerDlg 대화 상자
 class CMyViewerDlg : public CDialogEx
@@ -12,12 +12,12 @@ class CMyViewerDlg : public CDialogEx
 public:
 	CMyViewerDlg(CWnd* pParent = nullptr);	// 표준 생성자입니다.
 
-	void UpdateImageViewerPoints();
+	void UpdateImageViewerPoints(); //시작,종료좌표를 m_wndImageViewer에 업데이트
 	CImageViewerWnd m_wndImageViewer;
 	CString m_strExeFilePath;
 	CToolTipCtrl m_ToolTip;
 
-	void OnOK() {}
+	void OnOK() {} //Enter키로 대화상자 종료되지 않도록 막음
 	void OnCancel();
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
@@ -42,7 +42,6 @@ public:
 	afx_msg void OnBnClickedDraw();
 	afx_msg void OnBnClickedAction();
 	afx_msg void OnBnClickedOpen();
-	afx_msg void OnSize(UINT nType, int cx, int cy);
 
 protected:
 	int m_x1;
@@ -51,6 +50,7 @@ protected:
 	int m_y2;
 public:
 	virtual BOOL PreTranslateMessage(MSG* pMsg);
+	afx_msg void OnSize(UINT nType, int cx, int cy);
 	afx_msg HBRUSH OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor);
 	afx_msg void OnEnChangeEditX1();
 	afx_msg void OnEnChangeEditY1();

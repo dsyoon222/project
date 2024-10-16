@@ -142,6 +142,7 @@ BOOL CMyViewerDlg::OnInitDialog()
 	}
 	UpdateImageViewerPoints(); //시작좌표와 종료좌표를 업데이트
 
+	//좌표입력 스핀버튼의 Range설정
 	int nMinValue = 0, nMaxValue = 2000;
 	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN_X1))->SetRange32(nMinValue, nMaxValue);
 	((CSpinButtonCtrl*)GetDlgItem(IDC_SPIN_Y1))->SetRange32(nMinValue, nMaxValue);
