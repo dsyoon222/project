@@ -1,0 +1,15 @@
+#include <string>
+#include <vector>
+
+using namespace std;
+
+int solution(int a, int b) {
+	string strA = std::to_string(a);
+	string strB = std::to_string(b);
+	int nAB = atoi((strA + strB).c_str());
+	int nBA = atoi((strB + strA).c_str());
+	if (nAB >= nBA)
+		return nAB;
+	else
+		return nBA;
+}
