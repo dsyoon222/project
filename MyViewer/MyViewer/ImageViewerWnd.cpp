@@ -1,4 +1,4 @@
-#include "pch.h"
+ï»¿#include "pch.h"
 #include "ImageViewerWnd.h"
 
 IMPLEMENT_DYNAMIC(CImageViewerWnd, CWnd)
@@ -64,7 +64,7 @@ BOOL CImageViewerWnd::SaveImage(LPCTSTR lpszFilePathName, BOOL bDrawOveraly/* = 
 					m_image.Draw(pDC->m_hDC, 0, 0);
 					DrawCircle(pDC, m_ptStart, m_nCircleRadius);
 					DrawXMark(pDC, m_ptStart, RGB(255, 0, 0), TRUE);
-					//DrawXMark(pDC, m_ptEnd, RGB(0, 0, 255),); //Á¾·áÁÂÇ¥´Â Á¦¿Ü
+					//DrawXMark(pDC, m_ptEnd, RGB(0, 0, 255),); //ì¢…ë£Œì¢Œí‘œëŠ” ì œì™¸
 					image.ReleaseDC();
 					image.Save(lpszFilePathName, guidImageFormat);
 				}
@@ -77,7 +77,7 @@ BOOL CImageViewerWnd::SaveImage(LPCTSTR lpszFilePathName, BOOL bDrawOveraly/* = 
 	return FALSE;
 }
 
-//½ÃÀÛÁÂÇ¥¿Í Á¾·áÁÂÇ¥¸¦ ¼³Á¤
+//ì‹œì‘ì¢Œí‘œì™€ ì¢…ë£Œì¢Œí‘œë¥¼ ì„¤ì •
 void CImageViewerWnd::SetStartEndPoints(CPoint ptStart, CPoint ptEnd)
 {
 	m_ptStart = ptStart;
@@ -85,7 +85,7 @@ void CImageViewerWnd::SetStartEndPoints(CPoint ptStart, CPoint ptEnd)
 	if (GetSafeHwnd()) { Invalidate(); }
 }
 
-//¿øÀÇ Áß½É°ú ¹İÁö¸§À» ÀÔ·Â
+//ì›ì˜ ì¤‘ì‹¬ê³¼ ë°˜ì§€ë¦„ì„ ì…ë ¥
 void CImageViewerWnd::MoveCircle(CPoint ptCenter, int nRadius/* = 10*/)
 {
 	m_ptStart = ptCenter;
@@ -106,11 +106,11 @@ void CImageViewerWnd::ShowXMark(BOOL bShow/* = TRUE*/)
 	if (GetSafeHwnd()) { Invalidate(); }
 }
 
-//ÀÌ¹ÌÁö ¹è°æ»ö¿¡ ¿µÇâ¾øÀÌ Ç×»ó CircleÀÌ º¸ÀÌµµ·Ï BLACK+WHITE ÀÌÁß ±×¸®±â
+//ì´ë¯¸ì§€ ë°°ê²½ìƒ‰ì— ì˜í–¥ì—†ì´ í•­ìƒ Circleì´ ë³´ì´ë„ë¡ BLACK+WHITE ì´ì¤‘ ê·¸ë¦¬ê¸°
 void CImageViewerWnd::DrawCircle(CDC *pDC, CPoint pt, int nRadius/* = 10*/)
 {
 	pDC->SelectStockObject(NULL_BRUSH);
-	//int nOldMode = pDC->SetROP2(R2_NOT); //¹è°æ»ö°ú ¹İÀüÇØµµ ¾Èº¸ÀÌ´Â »öÀÌ Á¸ÀçÇÏ¿© ÁÖ¼®Ã³¸®ÇÔ.
+	//int nOldMode = pDC->SetROP2(R2_NOT); //ë°°ê²½ìƒ‰ê³¼ ë°˜ì „í•´ë„ ì•ˆë³´ì´ëŠ” ìƒ‰ì´ ì¡´ì¬í•˜ì—¬ ì£¼ì„ì²˜ë¦¬í•¨.
 	CRect rc(pt, pt);
 	rc.InflateRect(nRadius, nRadius);
 	pDC->SelectStockObject(WHITE_PEN);
@@ -121,7 +121,7 @@ void CImageViewerWnd::DrawCircle(CDC *pDC, CPoint pt, int nRadius/* = 10*/)
 	//pDC->SetROP2(nOldMode);//R2_COPYPEN
 }
 
-//ÀÌ¹ÌÁö ¹è°æ»ö¿¡ ¿µÇâ¾øÀÌ Ç×»ó ÅØ½ºÆ® »ö»óÀÌ º¸ÀÌµµ·Ï Ãâ·Â
+//ì´ë¯¸ì§€ ë°°ê²½ìƒ‰ì— ì˜í–¥ì—†ì´ í•­ìƒ í…ìŠ¤íŠ¸ ìƒ‰ìƒì´ ë³´ì´ë„ë¡ ì¶œë ¥
 void CImageViewerWnd::DrawOutlineText(CDC *pDC, CString str, CRect rcText,
 	UINT uFormat/* = DT_CENTER | DT_VCENTER | DT_SINGLELINE*/, COLORREF clrText/* = RGB(0, 0, 0)*/, 
 	COLORREF clrOutline/* = RGB(255, 255, 255)*/)
@@ -129,7 +129,7 @@ void CImageViewerWnd::DrawOutlineText(CDC *pDC, CString str, CRect rcText,
 	CPoint ptOffset[] = { {-1, -1}, {-1, 1}, {1, -1}, {1, 1}, {1, 0}, {0, 1}, {-1, 0}, {0, -1} };	
 	pDC->SetBkMode(TRANSPARENT);
 	pDC->SetTextColor(clrOutline);
-	//8¹æÇâÀ¸·Î Å×µÎ¸® ÅØ½ºÆ® Ãâ·Â
+	//8ë°©í–¥ìœ¼ë¡œ í…Œë‘ë¦¬ í…ìŠ¤íŠ¸ ì¶œë ¥
 	for (int i = 0; i < 8; i++) {
 		CRect rc = rcText;
 		rc.OffsetRect(ptOffset[i]);
@@ -139,7 +139,7 @@ void CImageViewerWnd::DrawOutlineText(CDC *pDC, CString str, CRect rcText,
 	pDC->DrawText(str, &rcText, uFormat);
 }
 
-//¿øÀÇ Áß½É¿¡ X Ç¥½Ã¸¦ ±×¸®°í, Áß½ÉÁÂÇ¥¸¦ TEXT Ãâ·ÂÇÑ´Ù.
+//ì›ì˜ ì¤‘ì‹¬ì— X í‘œì‹œë¥¼ ê·¸ë¦¬ê³ , ì¤‘ì‹¬ì¢Œí‘œë¥¼ TEXT ì¶œë ¥í•œë‹¤.
 void CImageViewerWnd::DrawXMark(CDC *pDC, CPoint pt, COLORREF clrLine/* = RGB(255, 0, 0)*/, 
 	BOOL bShowText/* = FALSE*/, int nXSize/* = 5*/)
 {
@@ -173,7 +173,7 @@ void CImageViewerWnd::OnPaint()
 {
 	CPaintDC dc(this); // device context for painting
 
-	//±ôºıÀÓ ¹æÁö¸¦ À§ÇØ MemoryDC »ç¿ë
+	//ê¹œë¹¡ì„ ë°©ì§€ë¥¼ ìœ„í•´ MemoryDC ì‚¬ìš©
 	CRect rcClient;
 	CDC memDC;
 	CBitmap bitmap;
@@ -209,7 +209,7 @@ BOOL CImageViewerWnd::OnEraseBkgnd(CDC* pDC)
 
 void CImageViewerWnd::OnDropFiles(HDROP hDropInfo)
 {
-	// TODO: ¿©±â¿¡ ¸Ş½ÃÁö Ã³¸®±â ÄÚµå¸¦ Ãß°¡ ¹×/¶Ç´Â ±âº»°ªÀ» È£ÃâÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— ë©”ì‹œì§€ ì²˜ë¦¬ê¸° ì½”ë“œë¥¼ ì¶”ê°€ ë°/ë˜ëŠ” ê¸°ë³¸ê°’ì„ í˜¸ì¶œí•©ë‹ˆë‹¤.
 	int NumDropFiles = 0;
 	TCHAR szFilePath[MAX_PATH];
 	NumDropFiles = DragQueryFile(hDropInfo, 0xFFFFFFFF, szFilePath, MAX_PATH);
@@ -233,7 +233,7 @@ int CImageViewerWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 	ModifyStyleEx(0, WS_EX_ACCEPTFILES, 0);
 
-	//°ü¸®ÀÚ¸ğµå¿¡¼­µµ DragDrop Çã¿ë
+	//ê´€ë¦¬ìëª¨ë“œì—ì„œë„ DragDrop í—ˆìš©
 	ChangeWindowMessageFilter(SPI_SETANIMATION, MSGFLT_ADD);
 	ChangeWindowMessageFilter(WM_DROPFILES, MSGFLT_ADD);
 	DragAcceptFiles(TRUE);
@@ -244,10 +244,10 @@ int CImageViewerWnd::OnCreate(LPCREATESTRUCT lpCreateStruct)
 
 void CImageViewerWnd::PreSubclassWindow()
 {
-	// TODO: ¿©±â¿¡ Æ¯¼öÈ­µÈ ÄÚµå¸¦ Ãß°¡ ¹×/¶Ç´Â ±âº» Å¬·¡½º¸¦ È£ÃâÇÕ´Ï´Ù.
+	// TODO: ì—¬ê¸°ì— íŠ¹ìˆ˜í™”ëœ ì½”ë“œë¥¼ ì¶”ê°€ ë°/ë˜ëŠ” ê¸°ë³¸ í´ë˜ìŠ¤ë¥¼ í˜¸ì¶œí•©ë‹ˆë‹¤.
 	ModifyStyleEx(0, WS_EX_ACCEPTFILES, 0);
 
-	//°ü¸®ÀÚ¸ğµå¿¡¼­µµ DragDrop Çã¿ë
+	//ê´€ë¦¬ìëª¨ë“œì—ì„œë„ DragDrop í—ˆìš©
 	ChangeWindowMessageFilter(SPI_SETANIMATION, MSGFLT_ADD);
 	ChangeWindowMessageFilter(WM_DROPFILES, MSGFLT_ADD);
 	DragAcceptFiles(TRUE);
