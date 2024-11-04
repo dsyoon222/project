@@ -54,8 +54,9 @@ CMyViewerDlg::CMyViewerDlg(CWnd* pParent /*=nullptr*/)
 	: CDialogEx(IDD_MYVIEWER_DIALOG, pParent)
 	, m_x1(150)
 	, m_y1(150)
-	, m_x2(400)
-	, m_y2(400)
+	, m_x2(300)
+	, m_y2(300)
+	, m_bActionClicked(FALSE)
 {
 	m_hIcon = AfxGetApp()->LoadIcon(IDR_MAINFRAME);
 	srand((unsigned)time(NULL));//rand 함수 seed 생성
@@ -213,66 +214,90 @@ HCURSOR CMyViewerDlg::OnQueryDragIcon()
 void CMyViewerDlg::OnBnClickedDraw()
 {
 	UpdateData(TRUE);
-	int nRadius = (rand() % 300) + 20; //최소=20, 최대=319 크기
-	m_wndImageViewer.MoveCircle(CPoint(m_x1, m_y1), nRadius);
+	int nGrayValue = 30;
+	int nNewRadius = (rand() % 20) + 20; //최소=10, 최대=39 크기
+
+	////기존 Circle 지운후 랜덤하게 새로운 원을 그린다.
 	m_wndImageViewer.ShowCircle(TRUE);
+	m_wndImageViewer.ClearCircle();
+	m_wndImageViewer.DrawCircle(m_x1, m_y1, nNewRadius, nGrayValue);
 }
 
-void CMyViewerDlg::OnBnClickedAction()
+void CMyViewerDlg::SleepPeekMessage(int nMilisec)
 {
+	DWORD dwTime = ::GetTickCount();
+	MSG msg;
+	while ((dwTime + nMilisec) >= ::GetTickCount()) {
+		if (::PeekMessage(&msg, NULL, 0, 0, PM_REMOVE)) {
+			::TranslateMessage(&msg);
+			::DispatchMessage(&msg);
+		}
+		Sleep(1);
+	}
+}
+void CMyViewerDlg::OnBnClickedAction()
+{	
+	if (m_bActionClicked) {
+		m_bActionClicked = FALSE;
+		return;
+	}
+	m_bActionClicked = TRUE;
+	SetDlgItemText(IDC_ACTION, _T("Stop"));
+	int nMoveStepX = 1;
+	int nMoveStepY = 1;
+	int nGrayValue = 30;
+
+	//시작좌표가 더 클때 움직이는 방향 처리
 	UpdateData(TRUE);
+	if (m_x1 > m_x2)
+		nMoveStepX = -nMoveStepX;
+	if (m_y1 > m_y2)
+		nMoveStepY = -nMoveStepY;
 
-	const int step = 10;//move 10 pixels per 'Action' Button click
-	if (m_x2 > m_x1)
-		m_x1 += step;
-	else
-		m_x1 -= step;
-
-	if (m_y2 > m_y1)
-		m_y1 += step;
-	else
-		m_y1 -= step;
-
-	int dx = abs(m_x2 - m_x1);
-	int dy = abs(m_y2 - m_y1);
-
-	if (dx <= step)
-		m_x1 = m_x2;
-	if (dy <= step)
-		m_y1 = m_y2;
-	UpdateData(FALSE);
-
-	m_wndImageViewer.MoveCircle(CPoint(m_x1, m_y1), 0);
-	m_wndImageViewer.SetStartEndPoints(CPoint(m_x1, m_y1), CPoint(m_x2, m_y2));
-	//m_wndImageViewer.ShowXMark(TRUE);
-	m_wndImageViewer.ShowCircle(TRUE);
-	
-	SYSTEMTIME cur_time;
-	::GetLocalTime(&cur_time);
+	int x = m_x1;
+	int y = m_y1;
+	int x2 = m_x2;
+	int y2 = m_y2;
+	int nMaxMove = __max(abs(m_x1 - m_x2), abs(m_y1 - m_y2));
+	int nRadius = m_wndImageViewer.GetRadius();
 	CString strFileName;
-	strFileName.Format(_T("%04d-%02d-%02d_%02d%02d%02d_(%d, %d).jpg"),
-		cur_time.wYear, cur_time.wMonth, cur_time.wDay,
-		cur_time.wHour, cur_time.wMinute, cur_time.wSecond, m_x1, m_y1);// cur_time.wMilliseconds);
-	m_wndImageViewer.SaveImage(m_strExeFilePath + _T("image\\") + strFileName);
+	
+	for (int i = 0; i < nMaxMove; i++) {
+		m_wndImageViewer.ClearCircle(); //기존 Circle 지움
+		if (x != x2) { x += nMoveStepX; }
+		if (y != y2) { y += nMoveStepY; }
+		m_wndImageViewer.DrawCircle(x, y, nRadius, nGrayValue); //이미지 버퍼에 직접그림
+
+		//파일 저장
+		strFileName.Format(_T("image\\image_%03d.jpg"), i);
+		m_wndImageViewer.SaveImage(m_strExeFilePath + strFileName);
+
+		SleepPeekMessage(10);//Sleep(10) + 윈도우 메시지 처리.
+		if (m_bActionClicked == FALSE)
+			break;
+	}
+	m_bActionClicked = FALSE;
+	SetDlgItemText(IDC_ACTION, _T("Action"));
 }
 
 //탐색기 파일열기 대화상자
 void CMyViewerDlg::OnBnClickedOpen()
 {
-	TCHAR szFilter[] = _T("Image Files(*.bmp, *.jpg, *.png) | *.bmp;*.jpg;*.png|All Files(*.*)|*.*||");
+	TCHAR szFilter[] = _T("Image Files(*.bmp, *.jpg) | *.bmp;*.jpg|All Files(*.*)|*.*||");
 	CFileDialog dlg(TRUE, NULL, NULL, OFN_HIDEREADONLY, szFilter);
 	if (dlg.DoModal() == IDOK)
 	{
 		if (m_wndImageViewer.OpenImage(dlg.GetPathName()) == FALSE) {
 			MessageBox(_T("지원되는 이미지 파일형식이 아닙니다."), _T("파일오류"), MB_ICONWARNING | MB_OK);
 			m_wndImageViewer.ShowXMark(FALSE);
+			SetWindowText(CString(_T("Image Viewer")));
 			return;
 		}
+		SetWindowText(dlg.GetFileName() + _T(" - Image Viewer"));
 		UpdateData(TRUE);
-		m_wndImageViewer.MoveCircle(CPoint(m_x1, m_y1), 0);
 		m_wndImageViewer.ShowCircle(TRUE);
-		m_wndImageViewer.SetStartEndPoints(CPoint(m_x1, m_y1), CPoint(m_x2, m_y2));
 		m_wndImageViewer.ShowXMark(TRUE);
+		m_wndImageViewer.RedrawCircle(30);
 	}
 }
 
@@ -284,6 +309,7 @@ void CMyViewerDlg::OnSize(UINT nType, int cx, int cy)
 		//화면상단의 컨트롤 위치 영역 확보
 		const int topMargin = 70;
 		m_wndImageViewer.SetWindowPos(NULL, 0, topMargin, cx, cy - topMargin, SWP_NOZORDER);
+		m_wndImageViewer.Invalidate();
 	}
 }
 
@@ -326,9 +352,13 @@ HBRUSH CMyViewerDlg::OnCtlColor(CDC* pDC, CWnd* pWnd, UINT nCtlColor)
 //시작좌표, 종료좌표 UI값 변경시 업데이트 한다.
 void CMyViewerDlg::UpdateImageViewerPoints()
 {
-	if (m_wndImageViewer.GetSafeHwnd()) {
+	if (m_wndImageViewer.GetSafeHwnd() && !m_bActionClicked) {
 		UpdateData(TRUE);
-		m_wndImageViewer.SetStartEndPoints(CPoint(m_x1, m_y1), CPoint(m_x2, m_y2));
+		m_wndImageViewer.ClearCircle();
+		int nRadius = m_wndImageViewer.GetRadius();
+		int nGrayValue = 30;
+		m_wndImageViewer.DrawCircle(m_x1, m_y1, nRadius, nGrayValue);
+
 	}
 }
 

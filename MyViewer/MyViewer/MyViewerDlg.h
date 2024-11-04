@@ -17,8 +17,10 @@ public:
 	CString m_strExeFilePath;
 	CToolTipCtrl m_ToolTip;
 
+	BOOL m_bActionClicked;
 	void OnOK() {} //Enter키로 대화상자 종료되지 않도록 막음
 	void OnCancel();
+	void SleepPeekMessage(int nMilisec = 10);
 // 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_MYVIEWER_DIALOG };
